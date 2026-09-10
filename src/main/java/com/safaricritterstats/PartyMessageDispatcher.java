@@ -4,8 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 
 public final class PartyMessageDispatcher {
-    static final long MINIMUM_INTERVAL_MILLIS = 3_000;
-    static final long DUPLICATE_COOLDOWN_MILLIS = 8_000;
+    static final long MINIMUM_INTERVAL_MILLIS = 1_000;
+    static final long DUPLICATE_COOLDOWN_MILLIS = 1_000;
     static final int MAXIMUM_PENDING = 16;
 
     private static final PartyMessageQueue QUEUE = new PartyMessageQueue(

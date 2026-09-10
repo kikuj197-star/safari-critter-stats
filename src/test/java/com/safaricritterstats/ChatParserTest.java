@@ -174,7 +174,7 @@ public final class ChatParserTest {
     }
 
     private static void assertPartyMessageQueue() {
-        PartyMessageQueue queue = new PartyMessageQueue(3_000, 8_000, 2);
+        PartyMessageQueue queue = new PartyMessageQueue(1_000, 1_000, 2);
         if (!queue.enqueue("unique:FOREST", () -> "forest", 1_000)) {
             throw new AssertionError("first query was rejected");
         }
@@ -190,16 +190,16 @@ public final class ChatParserTest {
         if (!queue.poll(1_000).orElseThrow().equals("forest")) {
             throw new AssertionError("wrong first queued response");
         }
-        if (queue.poll(3_999).isPresent()) {
+        if (queue.poll(1_999).isPresent()) {
             throw new AssertionError("rate limit was ignored");
         }
-        if (!queue.poll(4_000).orElseThrow().equals("total")) {
+        if (!queue.poll(2_000).orElseThrow().equals("total")) {
             throw new AssertionError("wrong second queued response");
         }
-        if (queue.enqueue("unique:FOREST", () -> "too soon", 8_999)) {
+        if (queue.enqueue("unique:FOREST", () -> "too soon", 1_999)) {
             throw new AssertionError("duplicate cooldown was ignored");
         }
-        if (!queue.enqueue("unique:FOREST", () -> "allowed", 9_000)) {
+        if (!queue.enqueue("unique:FOREST", () -> "allowed", 2_000)) {
             throw new AssertionError("query was not allowed after cooldown");
         }
         queue.reset();
