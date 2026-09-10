@@ -19,12 +19,17 @@ repositories {
         name = 'Hypixel'
         url = 'https://repo.hypixel.net/repository/Hypixel/'
     }
+    maven {
+        name = 'TerraformersMC'
+        url = 'https://maven.terraformersmc.com/releases/'
+    }
 }
 
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     implementation "net.fabricmc:fabric-loader:${project.loader_version}"
     implementation "net.hypixel:mod-api:${project.hypixel_mod_api_version}"
+    compileOnly "com.terraformersmc:modmenu:${project.modmenu_version}"
 }
 
 processResources {

@@ -18,6 +18,15 @@ Fabric 客户端模组，适用于 Minecraft 26.1.x，需要安装官方 Hypixel
 
 在 Critter Safari 外，模组不会拦截这些命令，也不会统计聊天消息。
 
+## 配置
+
+安装 Mod Menu 后，在模组列表选择 Safari Critter Stats 并点击配置按钮：
+
+- `Mod enabled`：模组功能总开关。关闭后停止统计、指令拦截与自动回复；在 Safari 内重新开启时会从开启时开始一轮新统计。
+- `Respond to party commands`：控制是否响应队友直接发在 Party Chat 中的查询指令；不会影响你自己输入 `/pc !...`。
+
+修改会立即保存到 `config/safari-critter-stats.json`。Mod Menu 是可选依赖；未安装时模组仍会使用配置文件中已保存的设置。
+
 示例输出：
 
 ```text

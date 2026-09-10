@@ -29,7 +29,9 @@ public abstract class ClientPacketListenerMixin {
             SafariCritterStatsMod.STATS.record(event, System.currentTimeMillis())
                 .ifPresent(PartyMessageDispatcher::enqueue)
         );
-        PartyQuery.parsePartyChat(message).ifPresent(PartyMessageDispatcher::enqueue);
+        if (SafariCritterStatsMod.CONFIG.respondsToPartyCommands()) {
+            PartyQuery.parsePartyChat(message).ifPresent(PartyMessageDispatcher::enqueue);
+        }
     }
 
     @Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)

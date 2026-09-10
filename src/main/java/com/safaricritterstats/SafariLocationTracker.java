@@ -20,7 +20,7 @@ public final class SafariLocationTracker {
     }
 
     public static boolean ensureRunStarted() {
-        return inSafari;
+        return SafariCritterStatsMod.CONFIG.isEnabled() && inSafari;
     }
 
     public static synchronized void onGameLogin() {
@@ -34,13 +34,26 @@ public final class SafariLocationTracker {
             .map(SafariLocationTracker::isSafariMode)
             .orElse(false);
         if (nextInSafari && !inSafari) {
-            SafariCritterStatsMod.STATS.startRun(System.currentTimeMillis());
             PartyMessageDispatcher.reset();
+            if (SafariCritterStatsMod.CONFIG.isEnabled()) {
+                SafariCritterStatsMod.STATS.startRun(System.currentTimeMillis());
+            } else {
+                SafariCritterStatsMod.STATS.reset();
+            }
             inSafari = true;
             SafariCritterStatsMod.LOGGER.info("[SafariCritterStats] New Critter Safari run detected; counters reset.");
         } else if (!nextInSafari) {
             inSafari = false;
             PartyMessageDispatcher.reset();
+        }
+    }
+
+    public static synchronized void onMasterEnabledChanged(boolean enabled) {
+        PartyMessageDispatcher.reset();
+        if (enabled && inSafari) {
+            SafariCritterStatsMod.STATS.startRun(System.currentTimeMillis());
+        } else {
+            SafariCritterStatsMod.STATS.reset();
         }
     }
 

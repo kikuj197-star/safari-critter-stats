@@ -30,7 +30,7 @@ public final class PartyMessageDispatcher {
     }
 
     public static void tick() {
-        if (!SafariLocationTracker.isInSafari()) return;
+        if (!SafariCritterStatsMod.CONFIG.isEnabled() || !SafariLocationTracker.isInSafari()) return;
         ClientPacketListener connection = Minecraft.getInstance().getConnection();
         if (connection == null) return;
         QUEUE.poll(System.currentTimeMillis())

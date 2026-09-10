@@ -8,6 +8,7 @@ public final class SafariCritterStatsMod implements ClientModInitializer {
     public static final String MOD_ID = "safaricritterstats";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
     public static final SafariSessionStats STATS = new SafariSessionStats();
+    public static final SafariCritterConfig CONFIG = SafariCritterConfig.load();
 
     @Override
     public void onInitializeClient() {
