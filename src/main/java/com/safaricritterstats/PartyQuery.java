@@ -24,7 +24,8 @@ public record PartyQuery(Kind kind, CritterRegion region) {
         String[] parts = normalized.split(" ");
         if (parts.length < 2 || !parts[0].equals("pc")) return Optional.empty();
 
-        if (parts[1].equals("!unique") || parts[1].equals("!uniq")) {
+        if (parts[1].equals("!unique") || parts[1].equals("!uniq")
+            || parts[1].equals("!missing") || parts[1].equals("!miss")) {
             if (parts.length == 2) return Optional.of(new PartyQuery(Kind.UNIQUE, null));
             if (parts.length == 3) {
                 return CritterRegion.fromAlias(parts[2])

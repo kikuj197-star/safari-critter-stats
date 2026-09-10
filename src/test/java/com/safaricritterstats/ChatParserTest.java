@@ -49,6 +49,8 @@ public final class ChatParserTest {
         assertRegionAlias("haunted", CritterRegion.HAUNTED);
         assertPartyQuery("pc !unique", PartyQuery.Kind.UNIQUE, null);
         assertPartyQuery("/pc !uniq", PartyQuery.Kind.UNIQUE, null);
+        assertPartyQuery("/pc !missing", PartyQuery.Kind.UNIQUE, null);
+        assertPartyQuery("/pc !miss haunted", PartyQuery.Kind.UNIQUE, CritterRegion.HAUNTED);
         assertPartyQuery("pc !uniq f", PartyQuery.Kind.UNIQUE, CritterRegion.FOREST);
         assertPartyQuery("/pc   !UNIQ   Ice", PartyQuery.Kind.UNIQUE, CritterRegion.ICY);
         assertPartyQuery("pc !prog", PartyQuery.Kind.PROGRESS, null);
@@ -57,6 +59,10 @@ public final class ChatParserTest {
             "§9Party §8> §b[MVP] Teammate§f: !uniq f",
             PartyQuery.Kind.UNIQUE,
             CritterRegion.FOREST);
+        assertPartyChatQuery(
+            "§9Party §8> §b[MVP] Teammate§f: !missing ice",
+            PartyQuery.Kind.UNIQUE,
+            CritterRegion.ICY);
         assertNoPartyChatQuery("§2Guild > §aTeammate§f: !uniq f");
         assertNoPartyChatQuery("§9Party §8> §b[MVP] Teammate§f: Missing 9: Foxtrot");
         assertPartyMessageQueue();
@@ -77,6 +83,11 @@ public final class ChatParserTest {
         if (!SafariZoneTracker.isSpawnCoordinates(-50, 70, 23)
             || SafariZoneTracker.isSpawnCoordinates(-59, 70, 23)) {
             throw new AssertionError("Safari spawn detection failed");
+        }
+        if (SafariCritterConfig.clampScale(0.1F) != SafariCritterConfig.MIN_HUD_SCALE
+            || SafariCritterConfig.clampScale(9.0F) != SafariCritterConfig.MAX_HUD_SCALE
+            || SafariCritterConfig.clampScale(Float.NaN) != 1.0F) {
+            throw new AssertionError("HUD scale clamping failed");
         }
 
         SafariSessionStats hideyhoStats = new SafariSessionStats();

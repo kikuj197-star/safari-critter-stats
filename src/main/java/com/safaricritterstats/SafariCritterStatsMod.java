@@ -13,6 +13,6 @@ public final class SafariCritterStatsMod implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         SafariLocationTracker.initialize();
-        LOGGER.info("[SafariCritterStats] Ready. Use /pc !unique (!uniq), !total, or !progress.");
+        LOGGER.info("[SafariCritterStats] Ready. Use /pc !unique (!uniq/!missing/!miss), !total, or !progress.");
     }
 }
