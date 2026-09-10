@@ -5,7 +5,11 @@
   "name": "Safari Critter Stats",
   "description": "Tracks Critter Safari captures and shards from chat, then reports missing critters and totals to party chat.",
   "authors": ["cookie"],
-  "contact": {},
+  "contact": {
+    "homepage": "https://github.com/kikuj197-star/safari-critter-stats",
+    "sources": "https://github.com/kikuj197-star/safari-critter-stats",
+    "issues": "https://github.com/kikuj197-star/safari-critter-stats/issues"
+  },
   "license": "MIT",
   "environment": "client",
   "entrypoints": {
