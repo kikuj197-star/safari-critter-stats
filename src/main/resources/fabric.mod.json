@@ -19,8 +19,8 @@
     "safaricritterstats.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.16.0",
-    "skyblocker": ">=6.9.2",
+    "fabricloader": ">=0.19.3",
+    "hypixel-mod-api": ">=1.0.2",
     "minecraft": ">=26.1 <26.2",
     "java": ">=25"
   }

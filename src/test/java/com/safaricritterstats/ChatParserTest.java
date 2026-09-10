@@ -45,6 +45,19 @@ public final class ChatParserTest {
         assertPartyQuery("/pc   !UNIQ   Ice", PartyQuery.Kind.UNIQUE, CritterRegion.ICY);
         assertPartyQuery("pc !prog", PartyQuery.Kind.PROGRESS, null);
         assertNoPartyQuery("pc !uniq nowhere");
+        assertPartyChatQuery(
+            "§9Party §8> §b[MVP] Teammate§f: !uniq f",
+            PartyQuery.Kind.UNIQUE,
+            CritterRegion.FOREST);
+        assertNoPartyChatQuery("§2Guild > §aTeammate§f: !uniq f");
+        assertNoPartyChatQuery("§9Party §8> §b[MVP] Teammate§f: Missing 9: Foxtrot");
+        assertPartyMessageQueue();
+        if (!SafariLocationTracker.isSafariMode("safari")
+            || !SafariLocationTracker.isSafariMode("SAFARI")
+            || SafariLocationTracker.isSafariMode("hub")
+            || SafariLocationTracker.isSafariMode(null)) {
+            throw new AssertionError("official location mode detection failed");
+        }
 
         SafariSessionStats regionStats = new SafariSessionStats();
         regionStats.startRun(1_000);
@@ -139,6 +152,59 @@ public final class ChatParserTest {
     private static void assertNoPartyQuery(String command) {
         if (PartyQuery.parse(command).isPresent()) {
             throw new AssertionError("Should not parse: " + command);
+        }
+    }
+
+    private static void assertPartyChatQuery(
+        String message,
+        PartyQuery.Kind expectedKind,
+        CritterRegion expectedRegion
+    ) {
+        PartyQuery query = PartyQuery.parsePartyChat(message)
+            .orElseThrow(() -> new AssertionError("Party query not parsed: " + message));
+        if (query.kind() != expectedKind || query.region() != expectedRegion) {
+            throw new AssertionError("Unexpected party query: " + query);
+        }
+    }
+
+    private static void assertNoPartyChatQuery(String message) {
+        if (PartyQuery.parsePartyChat(message).isPresent()) {
+            throw new AssertionError("Should not parse party chat: " + message);
+        }
+    }
+
+    private static void assertPartyMessageQueue() {
+        PartyMessageQueue queue = new PartyMessageQueue(3_000, 8_000, 2);
+        if (!queue.enqueue("unique:FOREST", () -> "forest", 1_000)) {
+            throw new AssertionError("first query was rejected");
+        }
+        if (queue.enqueue("unique:FOREST", () -> "duplicate", 1_001)) {
+            throw new AssertionError("pending duplicate was accepted");
+        }
+        if (!queue.enqueue("total", () -> "total", 1_002)) {
+            throw new AssertionError("different query was rejected");
+        }
+        if (queue.enqueue("progress", () -> "progress", 1_003)) {
+            throw new AssertionError("queue limit was ignored");
+        }
+        if (!queue.poll(1_000).orElseThrow().equals("forest")) {
+            throw new AssertionError("wrong first queued response");
+        }
+        if (queue.poll(3_999).isPresent()) {
+            throw new AssertionError("rate limit was ignored");
+        }
+        if (!queue.poll(4_000).orElseThrow().equals("total")) {
+            throw new AssertionError("wrong second queued response");
+        }
+        if (queue.enqueue("unique:FOREST", () -> "too soon", 8_999)) {
+            throw new AssertionError("duplicate cooldown was ignored");
+        }
+        if (!queue.enqueue("unique:FOREST", () -> "allowed", 9_000)) {
+            throw new AssertionError("query was not allowed after cooldown");
+        }
+        queue.reset();
+        if (queue.pendingCount() != 0 || queue.poll(20_000).isPresent()) {
+            throw new AssertionError("queue reset failed");
         }
     }
 

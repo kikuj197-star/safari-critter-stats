@@ -1,10 +1,10 @@
 package com.safaricritterstats.mixin;
 
 import com.safaricritterstats.ChatParser;
+import com.safaricritterstats.PartyMessageDispatcher;
 import com.safaricritterstats.PartyQuery;
 import com.safaricritterstats.SafariLocationTracker;
 import com.safaricritterstats.SafariCritterStatsMod;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.network.protocol.game.ClientboundLoginPacket;
 import net.minecraft.network.protocol.game.ClientboundSystemChatPacket;
@@ -24,10 +24,12 @@ public abstract class ClientPacketListenerMixin {
     @Inject(method = "handleSystemChat", at = @At("HEAD"))
     private void safariStats$readCapture(ClientboundSystemChatPacket packet, CallbackInfo ci) {
         if (packet.overlay() || !SafariLocationTracker.ensureRunStarted()) return;
-        ChatParser.parse(packet.content().getString()).ifPresent(event ->
+        String message = packet.content().getString();
+        ChatParser.parse(message).ifPresent(event ->
             SafariCritterStatsMod.STATS.record(event, System.currentTimeMillis())
-                .ifPresent(completion -> safariStats$sendParty(completion.partyMessage()))
+                .ifPresent(PartyMessageDispatcher::enqueue)
         );
+        PartyQuery.parsePartyChat(message).ifPresent(PartyMessageDispatcher::enqueue);
     }
 
     @Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
@@ -39,15 +41,6 @@ public abstract class ClientPacketListenerMixin {
         if (!SafariLocationTracker.ensureRunStarted()) return;
 
         ci.cancel();
-        safariStats$sendParty(query.response(SafariCritterStatsMod.STATS));
-    }
-
-    private static void safariStats$sendParty(String response) {
-        Minecraft.getInstance().execute(() -> {
-            ClientPacketListener connection = Minecraft.getInstance().getConnection();
-            if (connection != null && SafariLocationTracker.ensureRunStarted()) {
-                connection.sendCommand("pc " + response);
-            }
-        });
+        PartyMessageDispatcher.enqueue(query);
     }
 }

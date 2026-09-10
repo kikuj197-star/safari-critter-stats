@@ -1,37 +1,50 @@
 package com.safaricritterstats;
 
-import de.hysky.skyblocker.utils.Utils;
+import net.hypixel.modapi.HypixelModAPI;
+import net.hypixel.modapi.packet.impl.clientbound.event.ClientboundLocationPacket;
 
-/** Uses Skyblocker's Hypixel Mod API-backed location state as the source of truth. */
+/** Uses Hypixel's official Mod API location event as the source of truth. */
 public final class SafariLocationTracker {
-    private static boolean wasInSafari;
+    private static volatile boolean inSafari;
 
     private SafariLocationTracker() {}
 
-    public static boolean isInSafari() {
-        return Utils.isInSafari();
+    public static void initialize() {
+        HypixelModAPI api = HypixelModAPI.getInstance();
+        api.createHandler(ClientboundLocationPacket.class, SafariLocationTracker::onLocation);
+        api.subscribeToEventPacket(ClientboundLocationPacket.class);
     }
 
-    public static boolean ensureRunStarted() {
-        boolean inSafari = isInSafari();
-        update(inSafari);
+    public static boolean isInSafari() {
         return inSafari;
     }
 
-    public static void onGameLogin() {
-        wasInSafari = false;
+    public static boolean ensureRunStarted() {
+        return inSafari;
+    }
+
+    public static synchronized void onGameLogin() {
+        inSafari = false;
         SafariCritterStatsMod.STATS.reset();
+        PartyMessageDispatcher.reset();
     }
 
-    public static void tick() {
-        update(isInSafari());
-    }
-
-    private static void update(boolean inSafari) {
-        if (inSafari && !wasInSafari) {
+    private static synchronized void onLocation(ClientboundLocationPacket packet) {
+        boolean nextInSafari = packet.getMode()
+            .map(SafariLocationTracker::isSafariMode)
+            .orElse(false);
+        if (nextInSafari && !inSafari) {
             SafariCritterStatsMod.STATS.startRun(System.currentTimeMillis());
+            PartyMessageDispatcher.reset();
+            inSafari = true;
             SafariCritterStatsMod.LOGGER.info("[SafariCritterStats] New Critter Safari run detected; counters reset.");
+        } else if (!nextInSafari) {
+            inSafari = false;
+            PartyMessageDispatcher.reset();
         }
-        wasInSafari = inSafari;
+    }
+
+    static boolean isSafariMode(String mode) {
+        return mode != null && mode.equalsIgnoreCase("safari");
     }
 }
