@@ -1,0 +1,12 @@
+{
+  "required": true,
+  "package": "com.safaricritterstats.mixin",
+  "compatibilityLevel": "JAVA_25",
+  "client": [
+    "ClientPacketListenerMixin",
+    "MinecraftMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

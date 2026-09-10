@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "safaricritterstats",
+  "version": "${version}",
+  "name": "Safari Critter Stats",
+  "description": "Tracks Critter Safari captures and shards from chat, then reports missing critters and totals to party chat.",
+  "authors": ["cookie"],
+  "contact": {},
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": ["com.safaricritterstats.SafariCritterStatsMod"]
+  },
+  "mixins": [
+    "safaricritterstats.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "skyblocker": ">=6.9.2",
+    "minecraft": ">=26.1 <26.2",
+    "java": ">=25"
+  }
+}

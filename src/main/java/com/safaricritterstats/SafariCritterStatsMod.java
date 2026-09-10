@@ -1,0 +1,16 @@
+package com.safaricritterstats;
+
+import net.fabricmc.api.ClientModInitializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+public final class SafariCritterStatsMod implements ClientModInitializer {
+    public static final String MOD_ID = "safaricritterstats";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+    public static final SafariSessionStats STATS = new SafariSessionStats();
+
+    @Override
+    public void onInitializeClient() {
+        LOGGER.info("[SafariCritterStats] Ready. Use /pc !unique, !total, or !progress.");
+    }
+}
