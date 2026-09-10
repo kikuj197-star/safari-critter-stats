@@ -5,6 +5,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ChatParser {
+    private static final Pattern LEGACY_FORMATTING = Pattern.compile(
+        "\\u00A7[0-9A-FK-ORX]",
+        Pattern.CASE_INSENSITIVE);
+
     private static final Pattern CAPTURE = Pattern.compile(
         "^CAPTURE! You caught (?:an? )?(?:SPARKLING )?(.+?) and "
             + "(?:gained|received) (?:a Rainbow Feather and )?"
@@ -21,7 +25,7 @@ public final class ChatParser {
 
     public static Optional<CaptureEvent> parse(String message) {
         if (message == null) return Optional.empty();
-        String normalized = message.strip();
+        String normalized = LEGACY_FORMATTING.matcher(message).replaceAll("").strip();
 
         Matcher capture = CAPTURE.matcher(normalized);
         if (capture.matches()) {

@@ -6,8 +6,8 @@ Fabric 客户端模组，适用于 Minecraft 26.1.x，需要安装 Skyblocker 6.
 
 ## 使用
 
-- `/pc !unique`：发送剩余数量和名单中的前 5 个英文名称。
-- `/pc !unique i`、`/pc !unique ice`、`/pc !unique icy`：只发送 Icy 区域缺少的数量和前 5 个名称，不区分大小写。
+- `/pc !unique` 或 `/pc !uniq`：发送剩余数量和名单中的前 5 个英文名称。
+- `/pc !unique i`、`/pc !uniq ice`、`/pc !unique icy`：只发送 Icy 区域缺少的数量和前 5 个名称，不区分大小写。
 - 其他区域也可使用：Cavern 为 `c/cave/cavern`，Forest 为 `f/forest`，Haunted 为 `h/haunt/haunted`。
 - `/pc !total`：发送本轮 Critter 抓捕总数和 Shard 总量。
 - `/pc !progress` 或 `/pc !prog`：发送四个区域的完成进度；已完成区域会显示从进入本轮 Safari 起计算的耗时。

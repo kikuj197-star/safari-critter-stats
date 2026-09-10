@@ -17,6 +17,12 @@ public final class ChatParserTest {
             "CAPTURE! You caught a Bluebird and gained a Bluebird Shard!",
             "Bluebird", 1);
         assertEvent(
+            "§a§lCAPTURE! §7You caught a §fFoxtrot§7 and gained a §fFoxtrot Shard§7!",
+            "Foxtrot", 1);
+        assertEvent(
+            "§a§lCAPTURE! §7You caught a §aHoneybug§7 and gained 2x §aHoneybug Shard§7!",
+            "Honeybug", 2);
+        assertEvent(
             "CAPTURE! You caught a SPARKLING Mantis Shrimp and received a Rainbow Feather and 10x Mantis Shrimp Shard!",
             "Mantis Shrimp", 10);
         assertEvent(
@@ -33,6 +39,12 @@ public final class ChatParserTest {
         assertRegionAlias("cave", CritterRegion.CAVERN);
         assertRegionAlias("forest", CritterRegion.FOREST);
         assertRegionAlias("haunted", CritterRegion.HAUNTED);
+        assertPartyQuery("pc !unique", PartyQuery.Kind.UNIQUE, null);
+        assertPartyQuery("/pc !uniq", PartyQuery.Kind.UNIQUE, null);
+        assertPartyQuery("pc !uniq f", PartyQuery.Kind.UNIQUE, CritterRegion.FOREST);
+        assertPartyQuery("/pc   !UNIQ   Ice", PartyQuery.Kind.UNIQUE, CritterRegion.ICY);
+        assertPartyQuery("pc !prog", PartyQuery.Kind.PROGRESS, null);
+        assertNoPartyQuery("pc !uniq nowhere");
 
         SafariSessionStats regionStats = new SafariSessionStats();
         regionStats.startRun(1_000);
@@ -110,6 +122,24 @@ public final class ChatParserTest {
         CritterRegion actual = CritterRegion.fromAlias(alias)
             .orElseThrow(() -> new AssertionError("Missing alias: " + alias));
         if (actual != expected) throw new AssertionError(alias + " mapped to " + actual);
+    }
+
+    private static void assertPartyQuery(
+        String command,
+        PartyQuery.Kind expectedKind,
+        CritterRegion expectedRegion
+    ) {
+        PartyQuery query = PartyQuery.parse(command)
+            .orElseThrow(() -> new AssertionError("Not parsed: " + command));
+        if (query.kind() != expectedKind || query.region() != expectedRegion) {
+            throw new AssertionError("Unexpected query: " + query);
+        }
+    }
+
+    private static void assertNoPartyQuery(String command) {
+        if (PartyQuery.parse(command).isPresent()) {
+            throw new AssertionError("Should not parse: " + command);
+        }
     }
 
 }

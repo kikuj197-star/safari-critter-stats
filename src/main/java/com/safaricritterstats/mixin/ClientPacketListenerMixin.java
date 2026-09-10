@@ -1,7 +1,7 @@
 package com.safaricritterstats.mixin;
 
 import com.safaricritterstats.ChatParser;
-import com.safaricritterstats.CritterRegion;
+import com.safaricritterstats.PartyQuery;
 import com.safaricritterstats.SafariLocationTracker;
 import com.safaricritterstats.SafariCritterStatsMod;
 import net.minecraft.client.Minecraft;
@@ -12,8 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.Locale;
 
 @Mixin(ClientPacketListener.class)
 public abstract class ClientPacketListenerMixin {
@@ -34,34 +32,14 @@ public abstract class ClientPacketListenerMixin {
 
     @Inject(method = "sendCommand", at = @At("HEAD"), cancellable = true)
     private void safariStats$handlePartyQuery(String command, CallbackInfo ci) {
-        String normalized = command.startsWith("/") ? command.substring(1).strip() : command.strip();
-        normalized = normalized.replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
-
-        String[] parts = normalized.split(" ");
-        if (parts.length < 2 || !parts[0].equals("pc")) return;
-
-        String response = null;
-        if (parts[1].equals("!unique")) {
-            if (parts.length == 2) {
-                response = SafariCritterStatsMod.STATS.uniquePartyMessage();
-            } else if (parts.length == 3) {
-                CritterRegion region = CritterRegion.fromAlias(parts[2]).orElse(null);
-                if (region == null) return;
-                response = SafariCritterStatsMod.STATS.uniquePartyMessage(region);
-            }
-        } else if (parts.length == 2 && parts[1].equals("!total")) {
-            response = SafariCritterStatsMod.STATS.totalPartyMessage();
-        } else if (parts.length == 2
-            && (parts[1].equals("!progress") || parts[1].equals("!prog"))) {
-            response = SafariCritterStatsMod.STATS.progressPartyMessage();
-        }
-        if (response == null) return;
+        PartyQuery query = PartyQuery.parse(command).orElse(null);
+        if (query == null) return;
 
         // Outside the Safari this mod is inert: leave the original /pc message untouched.
         if (!SafariLocationTracker.ensureRunStarted()) return;
 
         ci.cancel();
-        safariStats$sendParty(response);
+        safariStats$sendParty(query.response(SafariCritterStatsMod.STATS));
     }
 
     private static void safariStats$sendParty(String response) {
