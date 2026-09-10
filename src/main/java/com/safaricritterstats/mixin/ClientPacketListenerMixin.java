@@ -42,6 +42,11 @@ public abstract class ClientPacketListenerMixin {
         // Outside the Safari this mod is inert: leave the original /pc message untouched.
         if (!SafariLocationTracker.ensureRunStarted()) return;
 
+        // When party commands are enabled, let the query reach Party Chat. The
+        // echoed party message will be handled by this client and any teammates
+        // who also enabled responses. Otherwise, keep the query local.
+        if (SafariCritterStatsMod.CONFIG.respondsToPartyCommands()) return;
+
         ci.cancel();
         PartyMessageDispatcher.enqueue(query);
     }

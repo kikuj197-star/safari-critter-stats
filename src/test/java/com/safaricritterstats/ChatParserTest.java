@@ -28,6 +28,14 @@ public final class ChatParserTest {
         assertEvent(
             "LOOT SHARE! You received a Rainbow Feather and 20x Macaw Shard from Player catching a SPARKLING Macaw!",
             "Macaw", 20);
+        assertEvent(
+            "CAPTURE! You found the Hideyho, and as a reward it gave you 2x Hideyho Shard!",
+            "Hideyho", 2);
+        assertEvent(
+            "LOOT SHARE! You received 4x Hideyho Shard from Player finding the Hideyho!",
+            "Hideyho", 4);
+        assertEmpty("[MOB] Hideyho: It took you 2m 34s to find me, so you get 1 Shard!");
+        assertEmpty("[MOB] Hideyho: Bye bye now!");
         assertEmpty("You found 1x Polaris Shard on the floor!");
         assertEmpty("Party > Player: CAPTURE! You caught a Bluebird and gained 2x Bluebird Shard!");
         assertEmpty("CAPTURE! You caught a Bluebird and gained 2x Polaris Shard!");
@@ -58,11 +66,38 @@ public final class ChatParserTest {
             || SafariLocationTracker.isSafariMode(null)) {
             throw new AssertionError("official location mode detection failed");
         }
+        if (SafariZone.fromBiomeId("hypixel:cavern") != SafariZone.CAVERN
+            || SafariZone.fromBiomeId("hypixel:forest") != SafariZone.FOREST
+            || SafariZone.fromBiomeId("hypixel:haunted") != SafariZone.HAUNTED
+            || SafariZone.fromBiomeId("hypixel:icy") != SafariZone.ICY
+            || SafariZone.fromBiomeId("hypixel:icy_caves") != SafariZone.ICY
+            || SafariZone.fromBiomeId("minecraft:forest") != SafariZone.UNKNOWN) {
+            throw new AssertionError("Safari biome detection failed");
+        }
+        if (!SafariZoneTracker.isSpawnCoordinates(-50, 70, 23)
+            || SafariZoneTracker.isSpawnCoordinates(-59, 70, 23)) {
+            throw new AssertionError("Safari spawn detection failed");
+        }
+
+        SafariSessionStats hideyhoStats = new SafariSessionStats();
+        hideyhoStats.startRun(1_000);
+        for (String message : new String[] {
+            "[MOB] Hideyho: It took you 2m 34s to find me, so you get 1 Shard!",
+            "[MOB] Hideyho: Bye bye now!",
+            "CAPTURE! You found the Hideyho, and as a reward it gave you 2x Hideyho Shard!"
+        }) {
+            ChatParser.parse(message).ifPresent(hideyhoStats::record);
+        }
+        if (hideyhoStats.totalCritters() != 1
+            || hideyhoStats.totalShards() != 2
+            || hideyhoStats.missingCritters(CritterRegion.HAUNTED).contains("Hideyho")) {
+            throw new AssertionError("Hideyho sequence was counted incorrectly");
+        }
 
         SafariSessionStats regionStats = new SafariSessionStats();
         regionStats.startRun(1_000);
         if (!regionStats.uniquePartyMessage(CritterRegion.ICY).equals(
-            "Missing 9: Strongarm, Tepid, Polaris, Shuddersquid, Billygoat")) {
+            "Icy Missing 9: Strongarm, Tepid, Polaris, Shuddersquid, Billygoat")) {
             throw new AssertionError(regionStats.uniquePartyMessage(CritterRegion.ICY));
         }
         for (int i = 0; i < CritterRegion.CAVERN.critters().size() - 1; i++) {

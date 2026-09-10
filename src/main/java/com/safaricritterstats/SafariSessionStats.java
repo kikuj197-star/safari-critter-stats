@@ -78,7 +78,7 @@ public final class SafariSessionStats {
                 ? region.displayName() + " done"
                 : new RegionCompletion(region, elapsed).partyMessage();
         }
-        return missingMessage("", missing);
+        return missingMessage(region.displayName() + " ", missing);
     }
 
     public synchronized String progressPartyMessage() {

@@ -3,7 +3,7 @@
   "id": "safaricritterstats",
   "version": "${version}",
   "name": "Safari Critter Stats",
-  "description": "Tracks Critter Safari captures and shards from chat, then reports missing critters and totals to party chat.",
+  "description": "Tracks Critter Safari captures and shards, detects the current biome, and displays missing critters in a live HUD.",
   "authors": ["cookie"],
   "contact": {
     "homepage": "https://github.com/kikuj197-star/safari-critter-stats",

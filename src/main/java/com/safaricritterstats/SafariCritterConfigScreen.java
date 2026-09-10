@@ -12,6 +12,7 @@ public final class SafariCritterConfigScreen extends Screen {
     private static final int BUTTON_HEIGHT = 20;
     private final Screen parent;
     private CycleButton<Boolean> partyCommandsButton;
+    private CycleButton<Boolean> hudButton;
 
     public SafariCritterConfigScreen(Screen parent) {
         super(Component.literal("Safari Critter Stats"));
@@ -22,7 +23,7 @@ public final class SafariCritterConfigScreen extends Screen {
     protected void init() {
         int contentWidth = Math.min(BUTTON_WIDTH, width - 40);
         int left = (width - contentWidth) / 2;
-        int firstButtonY = Math.max(82, height / 2 - 28);
+        int firstButtonY = Math.max(76, height / 2 - 42);
 
         StringWidget titleWidget = new StringWidget(title, font);
         titleWidget.setX((width - titleWidget.getWidth()) / 2);
@@ -46,6 +47,7 @@ public final class SafariCritterConfigScreen extends Screen {
                 config.setEnabled(enabled);
                 SafariLocationTracker.onMasterEnabledChanged(enabled);
                 partyCommandsButton.active = enabled;
+                hudButton.active = enabled;
             }));
 
         partyCommandsButton = addRenderableWidget(
@@ -60,6 +62,16 @@ public final class SafariCritterConfigScreen extends Screen {
                     if (!respond) PartyMessageDispatcher.reset();
                 }));
         partyCommandsButton.active = config.isEnabled();
+
+        hudButton = addRenderableWidget(
+            CycleButton.onOffBuilder(config.showsHud()).create(
+                left,
+                firstButtonY + 56,
+                contentWidth,
+                BUTTON_HEIGHT,
+                Component.literal("Show missing critters HUD"),
+                (button, showHud) -> config.setShowHud(showHud)));
+        hudButton.active = config.isEnabled();
 
         addRenderableWidget(Button.builder(Component.literal("Done"), button -> onClose())
             .bounds(left, height - 32, contentWidth, BUTTON_HEIGHT)

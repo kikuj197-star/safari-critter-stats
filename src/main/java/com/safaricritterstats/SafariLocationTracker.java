@@ -25,6 +25,7 @@ public final class SafariLocationTracker {
 
     public static synchronized void onGameLogin() {
         inSafari = false;
+        SafariZoneTracker.reset();
         SafariCritterStatsMod.STATS.reset();
         PartyMessageDispatcher.reset();
     }
@@ -35,6 +36,7 @@ public final class SafariLocationTracker {
             .orElse(false);
         if (nextInSafari && !inSafari) {
             PartyMessageDispatcher.reset();
+            SafariZoneTracker.reset();
             if (SafariCritterStatsMod.CONFIG.isEnabled()) {
                 SafariCritterStatsMod.STATS.startRun(System.currentTimeMillis());
             } else {
@@ -44,12 +46,14 @@ public final class SafariLocationTracker {
             SafariCritterStatsMod.LOGGER.info("[SafariCritterStats] New Critter Safari run detected; counters reset.");
         } else if (!nextInSafari) {
             inSafari = false;
+            SafariZoneTracker.reset();
             PartyMessageDispatcher.reset();
         }
     }
 
     public static synchronized void onMasterEnabledChanged(boolean enabled) {
         PartyMessageDispatcher.reset();
+        SafariZoneTracker.reset();
         if (enabled && inSafari) {
             SafariCritterStatsMod.STATS.startRun(System.currentTimeMillis());
         } else {

@@ -11,10 +11,17 @@ public final class ChatParser {
             + "(?:(?:([\\d,]+)x)|an?) (.+?) Shard!$",
         Pattern.CASE_INSENSITIVE);
 
+    private static final Pattern FOUND_CAPTURE = Pattern.compile(
+        "^CAPTURE! You found (?:the |an? )?(?:SPARKLING )?(.+?),? "
+            + "and as a reward it gave you "
+            + "(?:(?:([\\d,]+)x)|an?) (.+?) Shard!$",
+        Pattern.CASE_INSENSITIVE);
+
     private static final Pattern LOOT_SHARE = Pattern.compile(
         "^LOOT SHARE! You received (?:a Rainbow Feather and )?"
             + "(?:(?:([\\d,]+)x)|an?) (.+?) Shard "
-            + "from .+? catching (?:an? )?(?:SPARKLING )?(.+?)!$",
+            + "from .+? (?:catching (?:an? )?|finding the )"
+            + "(?:SPARKLING )?(.+?)!$",
         Pattern.CASE_INSENSITIVE);
 
     private ChatParser() {}
@@ -26,6 +33,11 @@ public final class ChatParser {
         Matcher capture = CAPTURE.matcher(normalized);
         if (capture.matches()) {
             return validated(capture.group(1), capture.group(3), capture.group(2));
+        }
+
+        Matcher foundCapture = FOUND_CAPTURE.matcher(normalized);
+        if (foundCapture.matches()) {
+            return validated(foundCapture.group(1), foundCapture.group(3), foundCapture.group(2));
         }
 
         Matcher lootShare = LOOT_SHARE.matcher(normalized);
