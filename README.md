@@ -1,6 +1,6 @@
 # Safari Critter Stats
 
-Fabric 客户端模组，适用于 Minecraft 26.1.x，需要安装官方 Hypixel Mod API 1.0.2 或更高版本，不依赖 Skyblocker。它从 Hypixel SkyBlock 聊天消息中统计当前 Critter Safari 实例的抓捕数、Shard 总数及尚未抓到的 Critter 种类，并在 HUD 中实时显示当前区域的缺失列表。
+Fabric 客户端模组，适用于 Minecraft 26.2，需要安装官方 Hypixel Mod API 1.0.2 或更高版本，不依赖 Skyblocker。它从 Hypixel SkyBlock 聊天消息中统计当前 Critter Safari 实例的抓捕数、Shard 总数及尚未抓到的 Critter 种类，并在 HUD 中实时显示当前区域的缺失列表。
 
 模组直接订阅 Hypixel 官方 Mod API 的 `ClientboundLocationPacket`，并以官方 `mode=safari` 数据判断位置。只有官方接口确认玩家位于 Critter Safari 时才会统计或响应；每次重新进入 Critter Safari 都会自动清空本轮数据，重新连接服务器也会清除旧数据。
 
@@ -53,7 +53,7 @@ Icy done (6m 12s)
 
 ## 安装
 
-需要 Minecraft 26.1.x、Fabric Loader 0.19.3 或更高版本，以及官方 Hypixel Mod API 1.0.2 或更高版本；不需要 Skyblocker。将构建出的 JAR 放入实例的 `mods` 文件夹即可。
+需要 Minecraft 26.2、Fabric Loader 0.19.3 或更高版本，以及官方 Hypixel Mod API 1.0.2 或更高版本；不需要 Skyblocker。将构建出的 JAR 放入实例的 `mods` 文件夹即可。
 
 ## 构建
 

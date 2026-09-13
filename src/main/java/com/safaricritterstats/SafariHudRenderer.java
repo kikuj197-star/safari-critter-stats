@@ -23,7 +23,6 @@ public final class SafariHudRenderer {
         if (!SafariCritterStatsMod.CONFIG.isEnabled()
             || !SafariCritterStatsMod.CONFIG.showsHud()
             || !SafariLocationTracker.isInSafari()
-            || minecraft.options.hideGui
             || minecraft.player == null
             || minecraft.level == null) {
             return;

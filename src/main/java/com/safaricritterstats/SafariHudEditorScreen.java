@@ -127,7 +127,7 @@ public final class SafariHudEditorScreen extends Screen {
     @Override
     public void onClose() {
         saveLayout();
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 
     private void clampToScreen() {

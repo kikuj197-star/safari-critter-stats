@@ -77,7 +77,7 @@ public final class SafariCritterConfigScreen extends Screen {
 
         hudEditorButton = addRenderableWidget(Button.builder(
             Component.literal("Edit HUD position & size"),
-            button -> minecraft.setScreen(new SafariHudEditorScreen(this)))
+            button -> minecraft.gui.setScreen(new SafariHudEditorScreen(this)))
             .bounds(left, firstButtonY + 84, contentWidth, BUTTON_HEIGHT)
             .build());
         hudEditorButton.active = config.isEnabled();
@@ -89,6 +89,6 @@ public final class SafariCritterConfigScreen extends Screen {
 
     @Override
     public void onClose() {
-        minecraft.setScreen(parent);
+        minecraft.gui.setScreen(parent);
     }
 }
